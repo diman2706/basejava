@@ -28,9 +28,10 @@ public class ArrayStorage {
         for (int j = 0; j < size; j++) {
             if (storage[j].uuid.equals(uuid)) {
                 index = j;
-                System.arraycopy(storage, 0, storage, 0, index);
-                System.arraycopy(storage, index + 1, storage, index, storage.length - index - 1);
+                System.arraycopy(storage, index + 1, storage, index, size - index - 1);
                 size--;
+                storage[size] = null;
+                break;
             }
         }
     }
