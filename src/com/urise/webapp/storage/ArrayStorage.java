@@ -9,26 +9,38 @@ public class ArrayStorage {
     private int size = 0;
 
     public void clear() {
-        for (int i = 0; i < size; i++) {
-            storage[i] = null;
-        }
+        Arrays.fill(storage, 0, size, null);
         size = 0;
     }
-    public void update(Resume r){
 
+    public void update(Resume r) {
+        int quantity = 0;
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(r.getUuid())) storage[i] = r;
+            else quantity++;
+            if (quantity == size) System.out.println("Resume is not exist");
+        }
     }
 
     public void save(Resume r) {
-        // если такого резюме нет в сторадже то добавить его
-        storage[size] = r;
-        size++;
+        if (size > storage.length) System.out.println("There is no space in the storage");
+        else {
+            for (int i = 0; i < size; i++) {
+                if (storage[i].getUuid().equals(r.getUuid())) {
+                    System.out.println("Resume has been already added");
+                    return;
+                }
+            }
+            storage[size] = r;
+            size++;
+        }
     }
 
     public Resume get(String uuid) {
-            int quantity = 0;
+        int quantity = 0;
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) return storage[i];
-            else quantity ++;
+            else quantity++;
             if (quantity == size) System.out.println("Resume is not exist");
         }
         return null;
@@ -44,8 +56,7 @@ public class ArrayStorage {
                 size--;
                 storage[size] = null;
                 break;
-            }
-            else quantity ++;
+            } else quantity++;
             if (quantity == size) System.out.println("Resume is not exist");
         }
     }
@@ -60,5 +71,6 @@ public class ArrayStorage {
     public int size() {
         return size;
     }
+
 }
 
