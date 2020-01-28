@@ -7,8 +7,6 @@ import java.util.Arrays;
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
     private int size = 0;
-    private Resume foundResume;
-    private int numberResume;
 
     public void clear() {
         Arrays.fill(storage, 0, size, null);
@@ -16,44 +14,43 @@ public class ArrayStorage {
     }
 
     public void update(Resume resume) {
-        if (isResumeContainsOfStorage(resume)) {
-            foundResume = resume;
+        int index = getIndex(resume.getUuid());
+        if (index == -1) {
+            System.out.println("Resume " + resume + " is not exist");
         } else {
-            System.out.println("Resume is not exist");
+            storage[index] = resume;
+            System.out.println("Resume " + resume + " is updated");
         }
     }
 
     public void save(Resume resume) {
         if (size > storage.length) {
             System.out.println("There is no space in the storage");
-        } else {
-            if (isResumeContainsOfStorage(resume)) {
-                System.out.println("Resume has been already added");
-                return;
-            }
-            storage[size] = resume;
-            size++;
+        } else if (getIndex(resume.getUuid()) != -1) {
+            System.out.println("Resume " + resume + " has been already added");
+            return;
         }
+        storage[size] = resume;
+        size++;
     }
 
     public Resume get(String uuid) {
-        if (isResumeContainsOfStorage(uuid)) {
-            return foundResume;
-        } else {
-            System.out.println("Resume is not exist");
+        int index = getIndex(uuid);
+        if (index != -1) {
+            return storage[index];
         }
+        System.out.println("Resume " + uuid + " is not exist");
         return null;
     }
 
     public void delete(String uuid) {
-        int index;
-        if (isResumeContainsOfStorage(uuid)) {
-            index = numberResume;
+        int index = getIndex(uuid);
+        if (index != -1) {
             System.arraycopy(storage, index + 1, storage, index, size - index - 1);
             size--;
             storage[size] = null;
         } else {
-            System.out.println("Resume is not exist");
+            System.out.println("Resume " + uuid + " is not exist");
         }
     }
 
@@ -68,26 +65,12 @@ public class ArrayStorage {
         return size;
     }
 
-    public boolean isResumeContainsOfStorage(String uuid) {
+    public int getIndex(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
-                foundResume = storage[i];
-                numberResume = i;
-                return true;
+                return i;
             }
         }
-        return false;
-    }
-
-    public boolean isResumeContainsOfStorage(Resume resume) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(resume.getUuid())) {
-                foundResume = storage[i];
-                numberResume = i;
-                return true;
-            }
-        }
-        return false;
+        return -1;
     }
 }
-
