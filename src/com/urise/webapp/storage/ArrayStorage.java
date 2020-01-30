@@ -2,14 +2,7 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.model.Resume;
 
-import java.util.Arrays;
-
 public class ArrayStorage extends AbstractArrayStorage {
-
-    public void clear() {
-        Arrays.fill(storage, 0, size, null);
-        size = 0;
-    }
 
     public void update(Resume resume) {
         int index = getIndex(resume.getUuid());
@@ -21,18 +14,11 @@ public class ArrayStorage extends AbstractArrayStorage {
         }
     }
 
-    public void save(Resume resume) {
-        if (size > STORAGE_LIMIT) {
-            System.out.println("There is no space in the storage");
-        } else if (getIndex(resume.getUuid()) != -1) {
-            System.out.println("Resume " + resume + " has been already added");
-            return;
-        }
+    @Override
+    protected void InsertResume(Resume resume) {
         storage[size] = resume;
         size++;
     }
-
-
 
     public void delete(String uuid) {
         int index = getIndex(uuid);
@@ -44,14 +30,6 @@ public class ArrayStorage extends AbstractArrayStorage {
             System.out.println("Resume " + uuid + " is not exist");
         }
     }
-
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
-    public Resume[] getAll() {
-        return Arrays.copyOfRange(storage, 0,size);
-    }
-
 
     protected int getIndex(String uuid) {
         for (int i = 0; i < size; i++) {
