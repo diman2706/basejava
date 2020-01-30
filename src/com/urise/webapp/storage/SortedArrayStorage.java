@@ -7,15 +7,6 @@ import java.util.Arrays;
 public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
-    public void update(Resume resume) {
-
-    }
-
-    @Override
-    public void delete(String uuid) {
-
-    }
-    @Override
     protected void InsertResume(Resume resume) {
       if (size == 0){
             storage[size] = resume;
