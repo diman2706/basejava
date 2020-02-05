@@ -10,15 +10,16 @@ import org.junit.Test;
 
 public abstract class AbstractArrayStorageTest {
     private Storage storage;
-
-    public AbstractArrayStorageTest(Storage storage) {
-        this.storage = storage;
-    }
+    private static final int STORAGE_LIMIT = 10000;
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
     private static final Resume resume = new Resume();
+
+    public AbstractArrayStorageTest(Storage storage) {
+        this.storage = storage;
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -64,13 +65,12 @@ public abstract class AbstractArrayStorageTest {
     public void save() throws Exception {
         storage.save(resume);
         Assert.assertEquals(4, storage.size());
+        storage.get(resume.getUuid());
     }
 
     @Test(expected = ExistStorageException.class)
     public void saveExist() throws Exception {
         storage.save(new Resume(UUID_1));
-        storage.save(new Resume(UUID_2));
-        storage.save(new Resume(UUID_3));
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -82,7 +82,7 @@ public abstract class AbstractArrayStorageTest {
 
     @Test(expected = NotExistStorageException.class)
     public void deleteNotExist() throws Exception {
-        storage.delete("UUID_767");
+        storage.delete("UUID_4");
     }
 
     @Test
@@ -98,10 +98,9 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Test(expected = StorageException.class)
-    public void saveToOverflowStorage() throws Exception {
-
+    public void saveOverflowStorage() throws Exception {
         try {
-            for (int i = 0; i < 9997; i++) {
+            for (int i = 4; i < STORAGE_LIMIT +1; i++) {
                 storage.save(new Resume());
             }
         } catch (Exception StorageException) {

@@ -6,9 +6,7 @@ public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected void insertResume(Resume resume, int index) {
-        if (index < 0) {
             storage[size] = resume;
-        }
     }
 
     @Override
