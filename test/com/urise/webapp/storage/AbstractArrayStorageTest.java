@@ -101,7 +101,7 @@ public abstract class AbstractArrayStorageTest {
     public void saveToOverflowStorage() throws Exception {
 
         try {
-            for (int i = 4; i < 10001; i++) {
+            for (int i = 0; i < 9997; i++) {
                 storage.save(new Resume());
             }
         } catch (Exception StorageException) {
