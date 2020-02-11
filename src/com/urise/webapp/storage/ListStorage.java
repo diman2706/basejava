@@ -13,13 +13,13 @@ public class ListStorage extends AbstractStorage {
     private List<Resume> list = new ArrayList<>();
 
     @Override
-    public void clear() {
-        list.clear();
+    public int size() {
+        return list.size();
     }
 
     @Override
-    public int size() {
-        return list.size();
+    public void clear() {
+        list.clear();
     }
 
     @Override
@@ -28,13 +28,44 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getFrom(String uuid) {
-        return list.get(getIndex(uuid));
+    public Resume getFromStorage(Resume resume) {
+        return list.get(getIndex(resume.getUuid()));
     }
 
     @Override
-    protected void refresh(Resume resume) {
+    protected void deleteFromStorage(Resume resume) {
+        list.remove(resume);
+    }
+
+    @Override
+    protected void saveToStorage(Resume resume) {
+        list.add(resume);
+    }
+
+    @Override
+    protected void updateFromStorage(Resume resume) {
         resume = list.get(getIndex(resume.getUuid()));
+    }
+
+    @Override
+    protected void isNotExist(Resume resume) {
+        if (!list.contains(resume)) {
+            throw new NotExistStorageException(resume.getUuid());
+        }
+    }
+
+    @Override
+    protected void isExist(Resume resume) {
+        if (list.contains(resume)) {
+            throw new ExistStorageException(resume.getUuid());
+        }
+    }
+
+    @Override
+    protected void isOverflow(Resume resume) {
+        if (list.size() >= AbstractArrayStorage.STORAGE_LIMIT) {
+            throw new StorageException("Storage overflow", resume.getUuid());
+        }
     }
 
     private int getIndex(String uuid) {
@@ -44,47 +75,5 @@ public class ListStorage extends AbstractStorage {
             }
         }
         return -1;
-    }
-
-    @Override
-    protected void extract(String uuid) {
-        list.remove(getIndex(uuid));
-    }
-
-    @Override
-    protected void isExist(Resume resume) {
-        for (Resume value : list) {
-            if (value.equals(resume)) {
-                throw new ExistStorageException(resume.getUuid());
-            }
-        }
-    }
-
-    @Override
-    protected void isNotExist(String uuid) {
-        int count = 0;
-        if (list.size() == 0) {
-            throw new NotExistStorageException(uuid);
-        }
-        for (Resume resume : list) {
-            if (resume.getUuid() == uuid) {
-                count++;
-            }
-        }
-        if (count == 0) {
-            throw new NotExistStorageException(uuid);
-        }
-    }
-
-    @Override
-    protected void supplement(Resume resume) {
-        list.add(resume);
-    }
-
-    @Override
-    protected void isOverflow(Resume resume) {
-        if (list.size() >= AbstractArrayStorage.STORAGE_LIMIT) {
-            throw new StorageException("Storage overflow", resume.getUuid());
-        }
     }
 }

@@ -4,42 +4,50 @@ import com.urise.webapp.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
 
+    private Resume resume;
+
     @Override
-    public void update(Resume resume) {
-        isNotExist(resume.getUuid());
-        refresh(resume);
+    public Resume get(String uuid) {
+        conditions(uuid);
+        return getFromStorage(resume);
+    }
+
+    @Override
+    public void delete(String uuid) {
+        conditions(uuid);
+        deleteFromStorage(resume);
     }
 
     @Override
     public void save(Resume resume) {
         isOverflow(resume);
         isExist(resume);
-        supplement(resume);
+        saveToStorage(resume);
     }
 
     @Override
-    public Resume get(String uuid) {
-        isNotExist(uuid);
-        return getFrom(uuid);
+    public void update(Resume resume) {
+        isNotExist(resume);
+        updateFromStorage(resume);
     }
 
-    @Override
-    public void delete(String uuid) {
-        isNotExist(uuid);
-        extract(uuid);
-    }
+    protected abstract void isNotExist(Resume resume);
 
     protected abstract void isExist(Resume resume);
 
-    protected abstract void isNotExist(String uuid);
-
-    protected abstract void supplement(Resume resume);
-
-    protected abstract void extract(String uuid);
-
-    protected abstract Resume getFrom(String uuid);
-
-    protected abstract void refresh(Resume resume);
-
     protected abstract void isOverflow(Resume resume);
+
+    protected abstract Resume getFromStorage(Resume resume);
+
+    protected abstract void deleteFromStorage(Resume resume);
+
+    protected abstract void saveToStorage(Resume resume);
+
+    protected abstract void updateFromStorage(Resume resume);
+
+    private void conditions(String uuid) {
+        resume = new Resume(uuid);
+        isNotExist(resume);
+    }
 }
+
