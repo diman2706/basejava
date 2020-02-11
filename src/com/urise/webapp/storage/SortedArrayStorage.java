@@ -7,6 +7,41 @@ import java.util.Arrays;
 public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
+    protected void isExist(Resume resume) {
+
+    }
+
+    @Override
+    protected void isNotExist(String uuid) {
+
+    }
+
+    @Override
+    protected void supplement(Resume resume) {
+
+    }
+
+    @Override
+    protected void extract(String uuid) {
+
+    }
+
+    @Override
+    protected Resume getFrom(String uuid) {
+        return null;
+    }
+
+    @Override
+    protected void refresh(Resume resume) {
+
+    }
+
+    @Override
+    protected void isOverflow(Resume resume) {
+
+    }
+
+    @Override
     protected void insertResume(Resume resume, int index) {
         index = -(index + 1);
         System.arraycopy(storage, index, storage, index + 1, size - index);
