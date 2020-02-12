@@ -1,53 +1,65 @@
 package com.urise.webapp.storage;
 
+import com.urise.webapp.exception.ExistStorageException;
+import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
 
-    private Resume resume;
-
     @Override
     public Resume get(String uuid) {
-        conditions(uuid);
-        return getFromStorage(resume);
+        Object searchKey = getExistedResume(uuid);
+        return getFromStorage(searchKey);
     }
 
     @Override
     public void delete(String uuid) {
-        conditions(uuid);
-        deleteFromStorage(resume);
+        Object searchKey = getExistedResume(uuid);
+        deleteFromStorage(searchKey);
     }
 
     @Override
     public void save(Resume resume) {
         isOverflow(resume);
-        isExist(resume);
-        saveToStorage(resume);
+        Object searchKey = getNotExistedResume(resume.getUuid());
+        saveToStorage(resume, searchKey);
     }
 
     @Override
     public void update(Resume resume) {
-        isNotExist(resume);
-        updateFromStorage(resume);
+        Object searchKey = getExistedResume(resume.getUuid());
+        updateFromStorage(resume,searchKey);
     }
 
-    protected abstract void isNotExist(Resume resume);
+    private Object getExistedResume(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (!isExist(searchKey)) {
+            throw new NotExistStorageException(uuid);
+        }
+        return searchKey;
+    }
 
-    protected abstract void isExist(Resume resume);
+    private Object getNotExistedResume(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (isExist(searchKey)) {
+            throw new ExistStorageException(uuid);
+        }
+        return searchKey;
+    }
+
+    protected abstract boolean isExist(Object index);
+
+    protected abstract Object getSearchKey(String uuid);
 
     protected abstract void isOverflow(Resume resume);
 
-    protected abstract Resume getFromStorage(Resume resume);
+    protected abstract Resume getFromStorage(Object index);
 
-    protected abstract void deleteFromStorage(Resume resume);
+    protected abstract void deleteFromStorage(Object index);
 
-    protected abstract void saveToStorage(Resume resume);
+    protected abstract void saveToStorage(Resume resume, Object index);
 
-    protected abstract void updateFromStorage(Resume resume);
+    protected abstract void updateFromStorage(Resume resume, Object index);
 
-    private void conditions(String uuid) {
-        resume = new Resume(uuid);
-        isNotExist(resume);
-    }
 }
 

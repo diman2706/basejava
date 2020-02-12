@@ -1,7 +1,5 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exception.ExistStorageException;
-import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
@@ -28,37 +26,28 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume getFromStorage(Resume resume) {
-        return list.get(getIndex(resume.getUuid()));
+    public Resume getFromStorage(Object index) {
+        return list.get((Integer) index);
     }
 
     @Override
-    protected void deleteFromStorage(Resume resume) {
-        list.remove(resume);
+    protected void deleteFromStorage(Object index) {
+        list.remove(((Integer) index).intValue());
     }
 
     @Override
-    protected void saveToStorage(Resume resume) {
+    protected void saveToStorage(Resume resume, Object index) {
         list.add(resume);
     }
 
     @Override
-    protected void updateFromStorage(Resume resume) {
-        resume = list.get(getIndex(resume.getUuid()));
+    protected void updateFromStorage(Resume resume, Object index) {
+        resume = list.get((Integer) index);
     }
 
     @Override
-    protected void isNotExist(Resume resume) {
-        if (!list.contains(resume)) {
-            throw new NotExistStorageException(resume.getUuid());
-        }
-    }
-
-    @Override
-    protected void isExist(Resume resume) {
-        if (list.contains(resume)) {
-            throw new ExistStorageException(resume.getUuid());
-        }
+    protected boolean isExist(Object index) {
+        return index != null;
     }
 
     @Override
@@ -68,12 +57,13 @@ public class ListStorage extends AbstractStorage {
         }
     }
 
-    private int getIndex(String uuid) {
+    @Override
+    protected Object getSearchKey(String uuid) {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getUuid() == uuid) {
                 return i;
             }
         }
-        return -1;
+        return null;
     }
 }

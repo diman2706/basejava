@@ -1,7 +1,5 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exception.ExistStorageException;
-import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
@@ -11,7 +9,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10000;
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
-    private int index;
 
     public int size() {
         return size;
@@ -27,50 +24,36 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume getFromStorage(Resume resume) {
-        return storage[index];
+    public Resume getFromStorage(Object index) {
+        return storage[(int) index];
     }
 
-    public void deleteFromStorage(Resume resume) {
-        deleteResume(index);
+    public void deleteFromStorage(Object index) {
+        deleteResume((Integer) index);
         storage[size - 1] = null;
         size--;
     }
 
-    public void saveToStorage(Resume resume) {
-        insertResume(resume, index);
+    public void saveToStorage(Resume resume, Object index) {
+        insertResume(resume, (Integer) index);
         size++;
     }
 
-    public void updateFromStorage(Resume resume) {
-        storage[index] = resume;
+    public void updateFromStorage(Resume resume, Object index) {
+        storage[(int) index] = resume;
         System.out.println("Resume " + resume + " is updated");
     }
 
     @Override
-    protected void isNotExist(Resume resume) {
-        index = getIndex(resume.getUuid());
-        if (index < 0) {
-            throw new NotExistStorageException(resume.getUuid());
-        }
+    protected boolean isExist(Object index) {
+        return (Integer) index >= 0;
     }
-
-    @Override
-    protected void isExist(Resume resume) {
-        index = getIndex(resume.getUuid());
-        if (index >= 0) {
-            throw new ExistStorageException(resume.getUuid());
-        }
-    }
-
     @Override
     protected void isOverflow(Resume resume) {
         if (size >= STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", resume.getUuid());
         }
     }
-
-    protected abstract int getIndex(String uuid);
 
     protected abstract void insertResume(Resume resume, int index);
 
