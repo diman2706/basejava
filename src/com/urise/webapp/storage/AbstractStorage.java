@@ -20,7 +20,6 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void save(Resume resume) {
-        isOverflow(resume);
         Object searchKey = getNotExistedResume(resume.getUuid());
         saveToStorage(resume, searchKey);
     }
@@ -28,7 +27,7 @@ public abstract class AbstractStorage implements Storage {
     @Override
     public void update(Resume resume) {
         Object searchKey = getExistedResume(resume.getUuid());
-        updateFromStorage(resume,searchKey);
+        updateFromStorage(resume, searchKey);
     }
 
     private Object getExistedResume(String uuid) {
@@ -50,8 +49,6 @@ public abstract class AbstractStorage implements Storage {
     protected abstract boolean isExist(Object index);
 
     protected abstract Object getSearchKey(String uuid);
-
-    protected abstract void isOverflow(Resume resume);
 
     protected abstract Resume getFromStorage(Object index);
 
