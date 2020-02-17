@@ -46,17 +46,17 @@ public abstract class AbstractStorage implements Storage {
         return searchKey;
     }
 
-    protected abstract boolean isExist(Object index);
+    protected abstract boolean isExist(Object searchKey);
 
     protected abstract Object getSearchKey(String uuid);
 
-    protected abstract Resume getFromStorage(Object index);
+    protected abstract Resume getFromStorage(Object searchKey);
 
-    protected abstract void deleteFromStorage(Object index);
+    protected abstract void deleteFromStorage(Object searchKey);
 
-    protected abstract void saveToStorage(Resume resume, Object index);
+    protected abstract void saveToStorage(Resume resume, Object searchKey);
 
-    protected abstract void updateFromStorage(Resume resume, Object index);
+    protected abstract void updateFromStorage(Resume resume, Object searchKey);
 
 }
 
