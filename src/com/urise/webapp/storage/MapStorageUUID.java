@@ -13,7 +13,7 @@ public class MapStorageUUID extends AbstractStorage {
 
     @Override
     protected boolean isExist(Object uuid) {
-        return map.containsKey((String) uuid);
+        return map.containsKey(uuid);
     }
 
     @Override
@@ -23,22 +23,22 @@ public class MapStorageUUID extends AbstractStorage {
 
     @Override
     protected Resume getFromStorage(Object uuid) {
-        return map.get((String) uuid);
+        return map.get(uuid);
     }
 
     @Override
     protected void deleteFromStorage(Object uuid) {
-        map.remove((String) uuid);
+        map.remove(uuid);
     }
 
     @Override
     protected void saveToStorage(Resume resume, Object uuid) {
-        map.put((String) uuid,resume);
+        map.put((String) uuid, resume);
     }
 
     @Override
     protected void updateFromStorage(Resume resume, Object uuid) {
-        map.put((String) uuid,resume);
+        map.put((String) uuid, resume);
     }
 
     @Override
