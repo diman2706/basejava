@@ -2,7 +2,7 @@ package com.urise.webapp.model;
 
 import java.util.Objects;
 
-public class TextType extends Section {
+public class TextType extends AbstractSection {
     private final String content;
 
     public TextType(String content) {

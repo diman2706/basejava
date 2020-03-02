@@ -3,7 +3,7 @@ package com.urise.webapp.model;
 import java.util.List;
 import java.util.Objects;
 
-public class ListOfStrings extends Section {
+public class ListOfStrings extends AbstractSection {
 
     private final List<String> list;
 
@@ -14,7 +14,7 @@ public class ListOfStrings extends Section {
 
     @Override
     public String toString() {
-        return list.toString();
+        return list.toString() + "\n";
     }
 
     @Override

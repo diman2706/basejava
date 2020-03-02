@@ -3,33 +3,33 @@ package com.urise.webapp.model;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class ComplexType extends Section {
+public class Position {
 
-    private final Link link;
+    private final Link position;
     private final String title;
     private final LocalDate startDate;
     private final LocalDate endDate;
-    private final String content;
+    private final String description;
 
-    public ComplexType(Link link, String title, LocalDate startDate, LocalDate endDate, String content) {
+    public Position(Link position, String title, LocalDate startDate, LocalDate endDate, String description) {
         Objects.requireNonNull(title, "title must mot be null");
         Objects.requireNonNull(startDate, "startDate must mot be null");
         Objects.requireNonNull(endDate, "endDate must mot be null");
-        this.link = link;
+        this.position = position;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.content = content;
+        this.description = description;
     }
 
     @Override
     public String toString() {
-        return "ComplexType{" +
-                "link=" + link +
-                ", title='" + title + '\'' +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", content='" + content + '\'' +
+        return "Position{" +
+                "position=" + position + "\n"+
+                " title='" + title + "\n"+'\'' +
+                " startDate=" + startDate +"\n"+
+                " endDate=" + endDate +"\n"+
+                " description='" + description + '\'' +"\n"+
                 '}';
     }
 
@@ -38,22 +38,22 @@ public class ComplexType extends Section {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ComplexType that = (ComplexType) o;
+        Position that = (Position) o;
 
-        if (!link.equals(that.link)) return false;
+        if (!position.equals(that.position)) return false;
         if (!title.equals(that.title)) return false;
         if (!startDate.equals(that.startDate)) return false;
         if (!endDate.equals(that.endDate)) return false;
-        return content.equals(that.content);
+        return description.equals(that.description);
     }
 
     @Override
     public int hashCode() {
-        int result = link.hashCode();
+        int result = position.hashCode();
         result = 31 * result + title.hashCode();
         result = 31 * result + startDate.hashCode();
         result = 31 * result + endDate.hashCode();
-        result = 31 * result + content.hashCode();
+        result = 31 * result + description.hashCode();
         return result;
     }
 }
