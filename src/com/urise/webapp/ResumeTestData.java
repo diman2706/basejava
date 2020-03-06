@@ -18,8 +18,15 @@ public class ResumeTestData {
         LocalDate date1 = LocalDate.of(2013, 3, 1);
         LocalDate date2 = LocalDate.of(2013, 5, 1);
 
-        Position position = new Position(link,"Автор проекта.",date0,LocalDate.now(),"Создание, организация и проведение Java онлайн проектов и стажировок.");
-        Position position1 = new Position(link1,"\"Functional Programming Principles in Scala\" by Martin Odersky",date1,date2,null);
+        List<Position.Activity> activityListExperience = new ArrayList<>();
+        activityListExperience.add(new Position.Activity("Автор проекта.", date0, LocalDate.now(), "Создание, организация и проведение Java онлайн проектов и стажировок."));
+        activityListExperience.add(new Position.Activity("Специальность", date1, date2, "Описание Специальности"));
+
+        List<Position.Activity> activityListEducation = new ArrayList<>();
+        activityListEducation.add(new Position.Activity("\"Functional Programming Principles in Scala\" by Martin Odersky", date1, date2, null));
+
+        Position position = new Position(link, activityListExperience);
+        Position position1 = new Position(link1, activityListEducation);
 
         List<Position> listExperiencePositions = new ArrayList<>();
         listExperiencePositions.add(position);
@@ -55,7 +62,7 @@ public class ResumeTestData {
 
         AbstractSection achievements = new ListOfStrings(listOfAchievements);
         AbstractSection qualifications = new ListOfStrings(listOfQualifications);
-     
+
         AbstractSection experience = new ListOfPositions(listExperiencePositions);
         AbstractSection education = new ListOfPositions(listEducatePositions);
 
@@ -66,8 +73,9 @@ public class ResumeTestData {
         sections.put(SectionType.EXPERIENCE, experience);
         sections.put(SectionType.EDUCATION, education);
 
-        System.out.println(resume.getContacts());
-        System.out.println();
-        System.out.println(resume.getSections());
+      //  System.out.println(resume.getContacts());
+      //  System.out.println();
+      //  System.out.println(resume.getSections());
+        System.out.println(resume.getSections().get(SectionType.EDUCATION));
     }
 }
