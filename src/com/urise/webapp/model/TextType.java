@@ -12,7 +12,7 @@ public class TextType extends AbstractSection {
 
     @Override
     public String toString() {
-        return content;
+        return content + "\n";
     }
 
     @Override

@@ -4,22 +4,19 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-public class Position {
+public class Organization {
 
-    private final Link position;
-    private List<Activity> activityList;
+    private final Link link;
+    private List<Position> positionList;
 
-    public Position(Link position, List<Activity> activityList) {
-        this.position = position;
-        this.activityList = activityList;
+    public Organization(Link link, List<Position> positionList) {
+        this.link = link;
+        this.positionList = positionList;
     }
 
     @Override
     public String toString() {
-        return "Position{" +
-                "position=" + position +
-                ", activityList=" + activityList +
-                '}';
+        return "Organization " + "(" + link + "\n" + positionList + "\n" + ")";
     }
 
     @Override
@@ -27,26 +24,26 @@ public class Position {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Position position1 = (Position) o;
+        Organization organization1 = (Organization) o;
 
-        if (!position.equals(position1.position)) return false;
-        return activityList.equals(position1.activityList);
+        if (!link.equals(organization1.link)) return false;
+        return positionList.equals(organization1.positionList);
     }
 
     @Override
     public int hashCode() {
-        int result = position.hashCode();
-        result = 31 * result + activityList.hashCode();
+        int result = link.hashCode();
+        result = 31 * result + positionList.hashCode();
         return result;
     }
 
-    public static class Activity {
+    public static class Position {
         private final String title;
         private final LocalDate startDate;
         private final LocalDate endDate;
         private final String description;
 
-        public Activity(String title, LocalDate startDate, LocalDate endDate, String description) {
+        public Position(String title, LocalDate startDate, LocalDate endDate, String description) {
             Objects.requireNonNull(title, "title must mot be null");
             Objects.requireNonNull(startDate, "startDate must mot be null");
             Objects.requireNonNull(endDate, "endDate must mot be null");
@@ -58,12 +55,7 @@ public class Position {
 
         @Override
         public String toString() {
-            return "Activity{" +
-                    "title='" + title + '\'' +
-                    ", startDate=" + startDate +
-                    ", endDate=" + endDate +
-                    ", description='" + description + '\'' +
-                    '}';
+            return "Position" + "(" + title + " " + startDate + " " + endDate + " " + description + ")";
         }
 
         @Override
@@ -71,7 +63,7 @@ public class Position {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Activity activity = (Activity) o;
+            Position activity = (Position) o;
 
             if (!title.equals(activity.title)) return false;
             if (!startDate.equals(activity.startDate)) return false;

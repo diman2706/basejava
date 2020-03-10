@@ -15,7 +15,7 @@ public class MainFile {
             throw new RuntimeException("Error", e);
         }
 
-        File dir = new File("./src/ru/javawebinar/basejava");
+        File dir = new File("./src/com/urise/webapp");
         System.out.println(dir.isDirectory());
         String[] list = dir.list();
         if (list != null) {
@@ -29,23 +29,23 @@ public class MainFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        recursion("C:\\Program Files\\Projectfolder\\basejava");
+        System.out.println();
+        getAroundDirectory("./src");
     }
 
-    public static void recursion(String path) throws IOException {
+    public static void getAroundDirectory(String path) throws IOException {
         File root = new File(path);
         File[] files = root.listFiles();
 
-        for (File obj : files) {
-            if (!obj.getCanonicalPath().equals("C:\\Program Files\\Projectfolder\\basejava\\.git")) {
+        if (files != null) {
+            for (File obj : files) {
                 if (obj.isFile()) {
-                    System.out.println(obj.getCanonicalPath());
+                    System.out.println("File :" + obj.getName());
                 } else if (obj.isDirectory()) {
-                    System.out.println(obj.getCanonicalPath());
-                    recursion(obj.getCanonicalPath());
+                    System.out.println("Directory :" + obj.getName());
+                    getAroundDirectory(obj.getCanonicalPath());
                 }
             }
-
         }
     }
 }

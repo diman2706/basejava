@@ -18,25 +18,24 @@ public class ResumeTestData {
         LocalDate date1 = LocalDate.of(2013, 3, 1);
         LocalDate date2 = LocalDate.of(2013, 5, 1);
 
-        List<Position.Activity> activityListExperience = new ArrayList<>();
-        activityListExperience.add(new Position.Activity("Автор проекта.", date0, LocalDate.now(), "Создание, организация и проведение Java онлайн проектов и стажировок."));
-        activityListExperience.add(new Position.Activity("Специальность", date1, date2, "Описание Специальности"));
+        List<Organization.Position> activityListExperience = new ArrayList<>();
+        activityListExperience.add(new Organization.Position("Автор проекта.", date0, LocalDate.now(), "Создание, организация и проведение Java онлайн проектов и стажировок."));
+        activityListExperience.add(new Organization.Position("Специальность", date1, date2, "Описание Специальности"));
 
-        List<Position.Activity> activityListEducation = new ArrayList<>();
-        activityListEducation.add(new Position.Activity("\"Functional Programming Principles in Scala\" by Martin Odersky", date1, date2, null));
+        List<Organization.Position> activityListEducation = new ArrayList<>();
+        activityListEducation.add(new Organization.Position("\"Functional Programming Principles in Scala\" by Martin Odersky", date1, date2, null));
 
-        Position position = new Position(link, activityListExperience);
-        Position position1 = new Position(link1, activityListEducation);
+        Organization organization = new Organization(link, activityListExperience);
+        Organization organization1 = new Organization(link1, activityListEducation);
 
-        List<Position> listExperiencePositions = new ArrayList<>();
-        listExperiencePositions.add(position);
+        List<Organization> listExperienceOrganizations = new ArrayList<>();
+        listExperienceOrganizations.add(organization);
 
-        List<Position> listEducatePositions = new ArrayList<>();
-        listEducatePositions.add(position1);
+        List<Organization> listEducateOrganizations = new ArrayList<>();
+        listEducateOrganizations.add(organization1);
 
         List<String> listOfAchievements = new ArrayList<>();
-        listOfAchievements.add("С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise");
-        listOfAchievements.add("Реализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike.");
+        listOfAchievements.add("Реализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike");
         listOfAchievements.add("Налаживание процесса разработки и непрерывной интеграции ERP системы River BPM. ");
 
         List<String> listOfQualifications = new ArrayList<>();
@@ -57,14 +56,14 @@ public class ResumeTestData {
         contacts.put(ContactType.STACKOVERFLOW, "Профиль StackOverflow");
 
         Map<SectionType, AbstractSection> sections = resume.getSections();
-        AbstractSection personal = new TextType("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
+        AbstractSection personal = new TextType("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры");
         AbstractSection objective = new TextType("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
 
         AbstractSection achievements = new ListOfStrings(listOfAchievements);
         AbstractSection qualifications = new ListOfStrings(listOfQualifications);
 
-        AbstractSection experience = new ListOfPositions(listExperiencePositions);
-        AbstractSection education = new ListOfPositions(listEducatePositions);
+        AbstractSection experience = new OrganizationSection(listExperienceOrganizations);
+        AbstractSection education = new OrganizationSection(listEducateOrganizations);
 
         sections.put(SectionType.PERSONAL, personal);
         sections.put(SectionType.OBJECTIVE, objective);
@@ -73,9 +72,9 @@ public class ResumeTestData {
         sections.put(SectionType.EXPERIENCE, experience);
         sections.put(SectionType.EDUCATION, education);
 
-      //  System.out.println(resume.getContacts());
-      //  System.out.println();
-      //  System.out.println(resume.getSections());
-        System.out.println(resume.getSections().get(SectionType.EDUCATION));
+        // System.out.println(resume.getContacts());
+        //   System.out.println();
+        System.out.println(resume.getSections());
+        // System.out.println(resume.getSections().get(SectionType.EXPERIENCE));
     }
 }
