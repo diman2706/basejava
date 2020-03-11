@@ -35,7 +35,11 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected Resume getFromStorage(File file) {
-        return doGet(file);
+        try {
+            return doRead(file);
+        } catch (IOException e) {
+            throw new StorageException("File read error", file.getName(), e);
+        }
     }
 
     @Override
@@ -90,13 +94,13 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     public int size() {
         File[] files = directory.listFiles();
-        if (!(files == null)) {
-            return files.length;
+        if (files == null) {
+            throw new StorageException("Directory read error", null);
         }
-        return 0;
+        return files.length;
     }
 
     protected abstract void doWrite(Resume resume, File file) throws IOException;
 
-    protected abstract Resume doGet(File file);
+    protected abstract Resume doRead(File file) throws IOException;
 }

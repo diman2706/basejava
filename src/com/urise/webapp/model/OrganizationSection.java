@@ -1,11 +1,16 @@
 package com.urise.webapp.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class OrganizationSection extends AbstractSection {
 
     private final List<Organization> organizations;
+
+    public OrganizationSection(Organization... organizations) {
+        this(Arrays.asList(organizations));
+    }
 
     public OrganizationSection(List<Organization> organizations) {
         Objects.requireNonNull(organizations, "positions must mot be null");
@@ -30,5 +35,9 @@ public class OrganizationSection extends AbstractSection {
     @Override
     public int hashCode() {
         return organizations.hashCode();
+    }
+
+    public List<Organization> getOrganizations() {
+        return organizations;
     }
 }

@@ -1,11 +1,16 @@
 package com.urise.webapp.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class ListOfStrings extends AbstractSection {
 
     private final List<String> list;
+
+    public ListOfStrings(String... list) {
+        this(Arrays.asList(list));
+    }
 
     public ListOfStrings(List<String> list) {
         Objects.requireNonNull(list, "list must not be null");
@@ -30,5 +35,9 @@ public class ListOfStrings extends AbstractSection {
     @Override
     public int hashCode() {
         return list.hashCode();
+    }
+
+    public List<String> getList() {
+        return list;
     }
 }

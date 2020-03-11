@@ -1,13 +1,22 @@
 package com.urise.webapp.model;
 
 import java.time.LocalDate;
+import java.time.Month;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static com.urise.webapp.util.DateUtil.NOW;
+import static com.urise.webapp.util.DateUtil.of;
 
 public class Organization {
 
     private final Link link;
     private List<Position> positionList;
+
+    public Organization(String name, String url, Position... positionsList) {
+        this(new Link(name, url), Arrays.asList(positionsList));
+    }
 
     public Organization(Link link, List<Position> positionList) {
         this.link = link;
@@ -43,13 +52,21 @@ public class Organization {
         private final LocalDate endDate;
         private final String description;
 
-        public Position(String title, LocalDate startDate, LocalDate endDate, String description) {
-            Objects.requireNonNull(title, "title must mot be null");
-            Objects.requireNonNull(startDate, "startDate must mot be null");
-            Objects.requireNonNull(endDate, "endDate must mot be null");
-            this.title = title;
+        public Position(int startYear, Month startMonth, String title, String description) {
+            this(of(startYear, startMonth), NOW, title, description);
+        }
+
+        public Position(int startYear, Month startMonth, int endYear, Month endMonth, String title, String description) {
+            this(of(startYear, startMonth), of(endYear, endMonth), title, description);
+        }
+
+        public Position(LocalDate startDate, LocalDate endDate, String title, String description) {
+            Objects.requireNonNull(startDate, "startDate must not be null");
+            Objects.requireNonNull(endDate, "endDate must not be null");
+            Objects.requireNonNull(title, "title must not be null");
             this.startDate = startDate;
             this.endDate = endDate;
+            this.title = title;
             this.description = description;
         }
 
@@ -62,23 +79,32 @@ public class Organization {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-
-            Position activity = (Position) o;
-
-            if (!title.equals(activity.title)) return false;
-            if (!startDate.equals(activity.startDate)) return false;
-            if (!endDate.equals(activity.endDate)) return false;
-            return Objects.equals(description, activity.description);
+            Position position = (Position) o;
+            return Objects.equals(startDate, position.startDate) &&
+                    Objects.equals(endDate, position.endDate) &&
+                    Objects.equals(title, position.title) &&
+                    Objects.equals(description, position.description);
         }
 
         @Override
         public int hashCode() {
-            int result = title.hashCode();
-            result = 31 * result + startDate.hashCode();
-            result = 31 * result + endDate.hashCode();
-            result = 31 * result + (description != null ? description.hashCode() : 0);
-            return result;
+            return Objects.hash(startDate, endDate, title, description);
+        }
+
+        public LocalDate getStartDate() {
+            return startDate;
+        }
+
+        public LocalDate getEndDate() {
+            return endDate;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
         }
     }
-
 }

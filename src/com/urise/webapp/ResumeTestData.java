@@ -19,11 +19,11 @@ public class ResumeTestData {
         LocalDate date2 = LocalDate.of(2013, 5, 1);
 
         List<Organization.Position> activityListExperience = new ArrayList<>();
-        activityListExperience.add(new Organization.Position("Автор проекта.", date0, LocalDate.now(), "Создание, организация и проведение Java онлайн проектов и стажировок."));
-        activityListExperience.add(new Organization.Position("Специальность", date1, date2, "Описание Специальности"));
+        activityListExperience.add(new Organization.Position(date0, LocalDate.now(), "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."));
+        activityListExperience.add(new Organization.Position(date1, date2, "Специальность", "Описание Специальности"));
 
         List<Organization.Position> activityListEducation = new ArrayList<>();
-        activityListEducation.add(new Organization.Position("\"Functional Programming Principles in Scala\" by Martin Odersky", date1, date2, null));
+        activityListEducation.add(new Organization.Position(date1, date2, "Functional Programming Principles in Scala", null));
 
         Organization organization = new Organization(link, activityListExperience);
         Organization organization1 = new Organization(link1, activityListEducation);

@@ -41,6 +41,22 @@ public class Resume implements Comparable<Resume> {
         return contacts;
     }
 
+    public void addContact(ContactType type, String value) {
+        contacts.put(type, value);
+    }
+
+    public void addSection(SectionType type, AbstractSection section) {
+        sections.put(type, section);
+    }
+
+    public String getContact(ContactType type) {
+        return contacts.get(type);
+    }
+
+    public AbstractSection getSection(SectionType type) {
+        return sections.get(type);
+    }
+
     @Override
     public String toString() {
         return uuid;
