@@ -1,5 +1,6 @@
 package com.urise.webapp.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
@@ -9,7 +10,8 @@ import java.util.Objects;
 import static com.urise.webapp.util.DateUtil.NOW;
 import static com.urise.webapp.util.DateUtil.of;
 
-public class Organization {
+public class Organization implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final Link link;
     private List<Position> positionList;
@@ -46,7 +48,7 @@ public class Organization {
         return result;
     }
 
-    public static class Position {
+    public static class Position implements Serializable {
         private final String title;
         private final LocalDate startDate;
         private final LocalDate endDate;

@@ -3,6 +3,8 @@ package com.urise.webapp.model;
 import java.util.Objects;
 
 public class TextType extends AbstractSection {
+    private static final long serialVersionUID = 1L;
+
     private final String content;
 
     public TextType(String content) {
