@@ -60,8 +60,8 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() throws Exception {
         storage.clear();
-        storage.save(new Resume(UUID_1, "fullName_1"));
-        storage.save(new Resume(UUID_2, "fullName_2"));
+        storage.save(R1);
+        storage.save(R2);
         storage.save(new Resume(UUID_3, "fullName_3"));
     }
 

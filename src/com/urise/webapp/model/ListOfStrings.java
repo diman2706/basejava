@@ -1,5 +1,6 @@
 package com.urise.webapp.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -7,7 +8,7 @@ import java.util.Objects;
 public class ListOfStrings extends AbstractSection {
     private static final long serialVersionUID = 1L;
 
-    private final List<String> list;
+    private  List<String> list;
 
     public ListOfStrings(String... list) {
         this(Arrays.asList(list));
@@ -16,6 +17,9 @@ public class ListOfStrings extends AbstractSection {
     public ListOfStrings(List<String> list) {
         Objects.requireNonNull(list, "list must not be null");
         this.list = list;
+    }
+
+    public ListOfStrings() {
     }
 
     @Override

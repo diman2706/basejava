@@ -1,15 +1,20 @@
 package com.urise.webapp.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.util.Objects;
 
 public class TextType extends AbstractSection {
     private static final long serialVersionUID = 1L;
 
-    private final String content;
+    private String content;
 
     public TextType(String content) {
         Objects.requireNonNull(content, "content must not be null");
         this.content = content;
+    }
+
+    public TextType() {
     }
 
     @Override
