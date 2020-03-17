@@ -30,20 +30,20 @@ public class MainFile {
             throw new RuntimeException(e);
         }
         System.out.println();
-        getAroundDirectory("./src");
+        getAroundDirectory("./src", "");
     }
 
-    public static void getAroundDirectory(String path) throws IOException {
+    public static void getAroundDirectory(String path, String string) throws IOException {
         File root = new File(path);
         File[] files = root.listFiles();
 
         if (files != null) {
             for (File obj : files) {
                 if (obj.isFile()) {
-                    System.out.println("File :" + obj.getName());
+                    System.out.println(string + "File :" + obj.getName());
                 } else if (obj.isDirectory()) {
-                    System.out.println("Directory :" + obj.getName());
-                    getAroundDirectory(obj.getCanonicalPath());
+                    System.out.println(string + "Directory :" + obj.getName());
+                    getAroundDirectory(obj.getCanonicalPath(), string + " ");
                 }
             }
         }
