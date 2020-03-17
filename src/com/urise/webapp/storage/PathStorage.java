@@ -4,12 +4,13 @@ import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.serializer.SerializationStrategy;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,7 +20,6 @@ public class PathStorage extends AbstractStorage<Path> {
 
     protected PathStorage(String dir, SerializationStrategy strategy) {
         directory = Paths.get(dir);
-        Objects.requireNonNull(directory, "directory must not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(dir + " is not directory or is not writable");
         }
@@ -28,11 +28,7 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     public void clear() {
-        try {
-            Files.list(directory).forEach(this::deleteFromStorage);
-        } catch (IOException e) {
-            throw new StorageException("Path delete error", null);
-        }
+        getPaths().forEach(this::deleteFromStorage);
     }
 
     @Override
@@ -47,7 +43,7 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected boolean isExist(Path path) {
-        return Files.isExecutable(path);
+        return Files.exists(path);
     }
 
     @Override
