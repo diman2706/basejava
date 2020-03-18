@@ -6,12 +6,12 @@ import com.urise.webapp.util.JsonParser;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class JsonStreamSerializer implements SerializationStrategy {
+public class JsonStrategy implements SerializationStrategy {
 
     @Override
-    public void doWrite(Resume r, OutputStream os) throws IOException {
+    public void doWrite(Resume resume, OutputStream os) throws IOException {
         try (Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
-            JsonParser.write(r, writer);
+            JsonParser.write(resume, writer);
         }
     }
 
