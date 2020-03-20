@@ -28,15 +28,15 @@ public abstract class AbstractStorageTest {
         R1 = new Resume(UUID_1, "Name1");
         R2 = new Resume(UUID_2, "Name2");
 
-        R1.addContact(ContactType.MAIL, "mail1@ya.ru");
         R1.addContact(ContactType.PHONENUMBER, "11111");
-        R1.addSection(SectionType.OBJECTIVE, new TextType("Objective1"));
+        R1.addContact(ContactType.MAIL, "mail1@ya.ru");
         R1.addSection(SectionType.PERSONAL, new TextType("Personal data"));
+        R1.addSection(SectionType.OBJECTIVE, new TextType("Objective1"));
         R1.addSection(SectionType.ACHIEVEMENTS, new ListOfStrings("Achivment11", "Achivment12", "Achivment13"));
         R1.addSection(SectionType.QUALIFICATIONS, new ListOfStrings("Java", "SQL", "JavaScript"));
         R1.addSection(SectionType.EXPERIENCE,
                 new OrganizationSection(
-                        new Organization("Organization11", "http://Organization11.ru",
+                        new Organization("Organization1", "http://Organization1.ru",
                                 new Organization.Position(2005, Month.JANUARY, "position1", "content1"),
                                 new Organization.Position(2001, Month.MARCH, 2005, Month.JANUARY, "position2", "content2"))));
         R1.addSection(SectionType.EDUCATION,
@@ -44,13 +44,13 @@ public abstract class AbstractStorageTest {
                         new Organization("Institute", null,
                                 new Organization.Position(1996, Month.JANUARY, 2000, Month.DECEMBER, "aspirant", null),
                                 new Organization.Position(2001, Month.MARCH, 2005, Month.JANUARY, "student", "IT facultet")),
-                        new Organization("Organization12", "http://Organization12.ru")));
+                        new Organization("Organization2", "http://Organization2.ru")));
         R2.addContact(ContactType.SKYPE, "skype2");
         R2.addContact(ContactType.PHONENUMBER, "22222");
         R1.addSection(SectionType.EXPERIENCE,
                 new OrganizationSection(
-                        new Organization("Organization2", "http://Organization2.ru",
-                                new Organization.Position(2015, Month.JANUARY, "position1", "content1"))));
+                        new Organization("Organization3", "http://Organization3.ru",
+                                new Organization.Position(2015, Month.JANUARY, "position3", "content3"))));
     }
 
     public AbstractStorageTest(Storage storage) {

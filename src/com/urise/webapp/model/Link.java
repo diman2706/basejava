@@ -21,6 +21,14 @@ public class Link implements Serializable {
     public Link() {
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
     @Override
     public String toString() {
         return "Link{" +

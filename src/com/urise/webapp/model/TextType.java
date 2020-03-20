@@ -1,7 +1,5 @@
 package com.urise.webapp.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import java.util.Objects;
 
 public class TextType extends AbstractSection {
@@ -15,6 +13,10 @@ public class TextType extends AbstractSection {
     }
 
     public TextType() {
+    }
+
+    public String getContent() {
+        return content;
     }
 
     @Override

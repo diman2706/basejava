@@ -34,6 +34,14 @@ public class Organization implements Serializable {
     public Organization() {
     }
 
+    public Link getLink() {
+        return link;
+    }
+
+    public List<Position> getPositionList() {
+        return positionList;
+    }
+
     @Override
     public String toString() {
         return "Organization " + "(" + link + "\n" + positionList + "\n" + ")";
