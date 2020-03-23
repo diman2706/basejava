@@ -4,57 +4,11 @@ import com.urise.webapp.model.*;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class DataStrategy implements SerializationStrategy {
-    String info;
-    List<String> listInfo;
-    List<Organization> listOrganization;
-    Link link;
-    List<Organization.Position> positionList;
-    List<String> InfoOrganization = new ArrayList<>();
-
-    private void getInfo(AbstractSection section) {
-        if (section instanceof TextType) {
-            info = ((TextType) section).getContent();
-        }
-        if (section instanceof ListOfStrings) {
-            listInfo = ((ListOfStrings) section).getList();
-        }
-        if (section instanceof OrganizationSection) {
-            listOrganization = ((OrganizationSection) section).getOrganizations();
-            getInfoFromOrganization(listOrganization);
-        }
-    }
-
-    private void getInfoFromOrganization(List<Organization> listOrganization) {
-        for (Organization organization : listOrganization) {
-            link = organization.getLink();
-            positionList = organization.getPositionList();
-            getInfoLink(link);
-            getInfoPosition(positionList);
-        }
-    }
-
-    private void getInfoLink(Link link) {
-        String linkName = link.getName();
-        String linkUrl = link.getUrl();
-        InfoOrganization.add(linkName);
-        InfoOrganization.add(linkUrl);
-    }
-
-    private void getInfoPosition(List<Organization.Position> positionList) {
-        for (Organization.Position position : positionList) {
-            String title = position.getTitle();
-            String description = position.getDescription();
-            LocalDate startDate = position.getStartDate();
-            LocalDate endDate = position.getEndDate();
-            InfoOrganization.add(startDate.toString());
-            InfoOrganization.add(endDate.toString());
-            InfoOrganization.add(title);
-            InfoOrganization.add(description);
-        }
-    }
 
     @Override
     public void doWrite(Resume resume, OutputStream os) throws IOException {
@@ -67,37 +21,101 @@ public class DataStrategy implements SerializationStrategy {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
             }
-            // TODO implements sections
 
             Map<SectionType, AbstractSection> sections = resume.getSections();
             dos.writeInt(sections.size());
             for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
                 dos.writeUTF(entry.getKey().name());
-                if (entry.getKey() == SectionType.PERSONAL || entry.getKey() == SectionType.OBJECTIVE) {
-                    getInfo(entry.getValue());
-                    dos.writeUTF(info);
-                }
-                if (entry.getKey() == SectionType.ACHIEVEMENTS || entry.getKey() == SectionType.QUALIFICATIONS) {
-                    getInfo(entry.getValue());
-                    dos.writeInt(listInfo.size());
-                    for (String info : listInfo) {
+                switch (entry.getKey()) {
+                    case PERSONAL:
+                    case OBJECTIVE:
+                        AbstractSection section = entry.getValue();
+                        String info = ((TextType) section).getContent();
                         dos.writeUTF(info);
-                    }
+                        break;
                 }
-                if (entry.getKey() == SectionType.EXPERIENCE || entry.getKey() == SectionType.EDUCATION) {
-                    getInfo(entry.getValue());
-                    dos.writeInt(listOrganization.size());
-                    dos.writeInt(positionList.size());
-                    for (String s : InfoOrganization) {
-                        if (s != null) {
-                            dos.writeUTF(s);
-                        } else dos.writeUTF("");
-                    }
-                    InfoOrganization.clear();
+                switch (entry.getKey()) {
+                    case ACHIEVEMENTS:
+                    case QUALIFICATIONS:
+                        AbstractSection section = entry.getValue();
+                        List<String> listInfo = ((ListOfStrings) section).getList();
+                        dos.writeInt(listInfo.size());
+                        for (String info : listInfo) {
+                            dos.writeUTF(info);
+                        }
+                        break;
+                }
+                switch (entry.getKey()) {
+                    case EXPERIENCE:
+                    case EDUCATION:
+                        AbstractSection section = entry.getValue();
+                        List<Organization> listOrganization = ((OrganizationSection) section).getOrganizations();
+                        dos.writeInt(listOrganization.size());
+                        for (int i = 0; i < listOrganization.size(); i++) {
+                            dos.writeUTF(listOrganization.get(i).getLink().getName() == null ? "" : listOrganization.get(i).getLink().getName());
+                            dos.writeUTF(listOrganization.get(i).getLink().getUrl() == null ? "" : listOrganization.get(i).getLink().getUrl());
+                            List<Organization.Position> positionList = listOrganization.get(i).getPositionList();
+                            dos.writeInt(positionList.size());
+                            for (int j = 0; j < positionList.size(); j++) {
+                            //   dos.writeUTF(positionList.get(j).getStartDate().toString());
+                             //  dos.writeUTF(positionList.get(j).getEndDate().toString());
+
+                               writeLocalData(dos,positionList.get(j).getStartDate());
+                               writeLocalData(dos,positionList.get(j).getEndDate());
+
+
+                              dos.writeUTF(positionList.get(j).getTitle() == null ? "" : positionList.get(j).getTitle());
+                              dos.writeUTF(positionList.get(j).getDescription() == null ? "" : positionList.get(j).getDescription());
+                            }
+                        }
+
+                        break;
                 }
             }
+
+        }
+
+    }
+
+    private void writeLocalData(DataOutputStream dos, LocalDate localDate) throws IOException{
+        dos.writeInt(localDate.getMonth().getValue());
+        dos.writeInt(localDate.getYear());
+
+    }
+    private LocalDate readLocalDate(DataInputStream dis) throws IOException {
+        return LocalDate.of(dis.readInt(), dis.readInt(), 1);
+    }
+  /*  private void getInfoFromOrganization(List<Organization> listOrganization) {
+        for (Organization organization : listOrganization) {
+            link = organization.getLink();
+            positionList = organization.getPositionList();
+            getInfoLink(link);
+            getInfoPosition(positionList);
         }
     }
+
+    private void getInfoLink(Link link) {
+        String linkName = link.getName();
+        String linkUrl = link.getUrl();
+        infoOrganization.add(linkName);
+        infoOrganization.add(linkUrl);
+    }
+
+    private void getInfoPosition(List<Organization.Position> positionList) {
+        for (Organization.Position position : positionList) {
+            String title = position.getTitle();
+            String description = position.getDescription();
+            LocalDate startDate = position.getStartDate();
+            LocalDate endDate = position.getEndDate();
+            infoOrganization.add(startDate.toString());
+            infoOrganization.add(endDate.toString());
+            infoOrganization.add(title);
+            infoOrganization.add(description);
+        }
+    }*/
+
+
+
 
     @Override
     public Resume doRead(InputStream is) throws IOException {
@@ -127,8 +145,31 @@ public class DataStrategy implements SerializationStrategy {
                     section = new ListOfStrings(listOfStrings);
                 }
                 if (type == SectionType.EXPERIENCE || type == SectionType.EDUCATION) {
-
                     List<Organization> organizationList = new ArrayList<>();
+                    int organizationListSize = dis.readInt();
+                    Link link = new Link(dis.readUTF(), dis.readUTF());
+                    Organization.Position position = new Organization.Position(
+                            readLocalDate(dis),
+                            readLocalDate(dis),
+                           // LocalDate.parse(dis.readUTF()),
+                          //  LocalDate.parse(dis.readUTF()),
+                            dis.readUTF(),
+                            dis.readUTF()
+                    );
+                    int positionListSize = dis.readInt();
+
+                    List<Organization.Position> positionList = new ArrayList<>();
+                    for (int j = 0; j < positionListSize; j++) {
+                        positionList.add(position);
+                    }
+
+                    for (int j = 0; j < organizationListSize; j++) {
+                        organizationList.add(new Organization(link, positionList));
+                    }
+                    section = new OrganizationSection(organizationList);
+
+
+                    /*List<Organization> organizationList = new ArrayList<>();
                     int organizationListSize = dis.readInt();
                     int positionListSize = dis.readInt();
 
@@ -148,7 +189,7 @@ public class DataStrategy implements SerializationStrategy {
                     for (int j = 0; j < organizationListSize; j++) {
                         organizationList.add(new Organization(link, positionList));
                     }
-                    section = new OrganizationSection(organizationList);
+                    section = new OrganizationSection(organizationList);*/
                 }
                 resume.addSection(type, section);
             }
