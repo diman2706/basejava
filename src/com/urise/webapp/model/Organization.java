@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +21,7 @@ public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Link link;
-    private List<Position> positionList;
+    private List<Position> positionList = new ArrayList<>();
 
     public Organization(String name, String url, Position... positionsList) {
         this(new Link(name, url), Arrays.asList(positionsList));
@@ -51,11 +52,9 @@ public class Organization implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        Organization organization1 = (Organization) o;
-
-        return Objects.equals(link, organization1.link) &&
-                Objects.equals(positionList, organization1.positionList);
+        Organization that = (Organization) o;
+        return Objects.equals(link, that.link) &&
+                Objects.equals(positionList, that.positionList);
     }
 
     @Override
@@ -87,7 +86,7 @@ public class Organization implements Serializable {
             this.startDate = startDate;
             this.endDate = endDate;
             this.title = title;
-            this.description = description;
+            this.description = description == null ? "" : description;
         }
 
         public Position() {

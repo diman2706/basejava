@@ -1,6 +1,5 @@
 package com.urise.webapp.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -8,7 +7,7 @@ import java.util.Objects;
 public class ListOfStrings extends AbstractSection {
     private static final long serialVersionUID = 1L;
 
-    private  List<String> list;
+    private List<String> list;
 
     public ListOfStrings(String... list) {
         this(Arrays.asList(list));
@@ -31,9 +30,7 @@ public class ListOfStrings extends AbstractSection {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         ListOfStrings that = (ListOfStrings) o;
-
         return list.equals(that.list);
     }
 

@@ -52,15 +52,15 @@ public class DataStrategy implements SerializationStrategy {
                         List<Organization> listOrganization = ((OrganizationSection) section).getOrganizations();
                         dos.writeInt(listOrganization.size());
                         for (Organization organization : listOrganization) {
-                            dos.writeUTF(organization.getLink().getName() == null ? "" : organization.getLink().getName());
-                            dos.writeUTF(organization.getLink().getUrl() == null ? "" : organization.getLink().getUrl());
+                            dos.writeUTF(organization.getLink().getName());
+                            dos.writeUTF(organization.getLink().getUrl());
                             List<Organization.Position> positionList = organization.getPositionList();
                             dos.writeInt(positionList.size());
                             for (Organization.Position position : positionList) {
                                 writeLocalData(dos, position.getStartDate());
                                 writeLocalData(dos, position.getEndDate());
-                                dos.writeUTF(position.getTitle() == null ? "" : position.getTitle());
-                                dos.writeUTF(position.getDescription() == null ? "" : position.getDescription());
+                                dos.writeUTF(position.getTitle());
+                                dos.writeUTF(position.getDescription());
                             }
                         }
                         break;
@@ -79,13 +79,15 @@ public class DataStrategy implements SerializationStrategy {
             for (int i = 0; i < size; i++) {
                 resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
-
             int sectionSize = dis.readInt();
-            for (int i = 0; i < sectionSize - 1; i++) {
+            for (int i = 0; i < sectionSize; i++) {
                 SectionType type = SectionType.valueOf(dis.readUTF());
                 AbstractSection section = null;
-                if (type == SectionType.PERSONAL || type == SectionType.OBJECTIVE) {
-                    section = new TextType(dis.readUTF());
+                switch (type) {
+                    case PERSONAL:
+                    case OBJECTIVE:
+                        section = new TextType(dis.readUTF());
+                        break;
                 }
                 switch (type) {
                     case ACHIEVEMENTS:

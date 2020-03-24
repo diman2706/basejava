@@ -28,10 +28,8 @@ public class TextType extends AbstractSection {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        TextType textType = (TextType) o;
-
-        return content.equals(textType.content);
+        TextType that = (TextType) o;
+        return content.equals(that.content);
     }
 
     @Override
