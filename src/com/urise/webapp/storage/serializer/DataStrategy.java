@@ -51,71 +51,23 @@ public class DataStrategy implements SerializationStrategy {
                         AbstractSection section = entry.getValue();
                         List<Organization> listOrganization = ((OrganizationSection) section).getOrganizations();
                         dos.writeInt(listOrganization.size());
-                        for (int i = 0; i < listOrganization.size(); i++) {
-                            dos.writeUTF(listOrganization.get(i).getLink().getName() == null ? "" : listOrganization.get(i).getLink().getName());
-                            dos.writeUTF(listOrganization.get(i).getLink().getUrl() == null ? "" : listOrganization.get(i).getLink().getUrl());
-                            List<Organization.Position> positionList = listOrganization.get(i).getPositionList();
+                        for (Organization organization : listOrganization) {
+                            dos.writeUTF(organization.getLink().getName() == null ? "" : organization.getLink().getName());
+                            dos.writeUTF(organization.getLink().getUrl() == null ? "" : organization.getLink().getUrl());
+                            List<Organization.Position> positionList = organization.getPositionList();
                             dos.writeInt(positionList.size());
-                            for (int j = 0; j < positionList.size(); j++) {
-                            //   dos.writeUTF(positionList.get(j).getStartDate().toString());
-                             //  dos.writeUTF(positionList.get(j).getEndDate().toString());
-
-                               writeLocalData(dos,positionList.get(j).getStartDate());
-                               writeLocalData(dos,positionList.get(j).getEndDate());
-
-
-                              dos.writeUTF(positionList.get(j).getTitle() == null ? "" : positionList.get(j).getTitle());
-                              dos.writeUTF(positionList.get(j).getDescription() == null ? "" : positionList.get(j).getDescription());
+                            for (Organization.Position position : positionList) {
+                                writeLocalData(dos, position.getStartDate());
+                                writeLocalData(dos, position.getEndDate());
+                                dos.writeUTF(position.getTitle() == null ? "" : position.getTitle());
+                                dos.writeUTF(position.getDescription() == null ? "" : position.getDescription());
                             }
                         }
-
                         break;
                 }
             }
-
-        }
-
-    }
-
-    private void writeLocalData(DataOutputStream dos, LocalDate localDate) throws IOException{
-        dos.writeInt(localDate.getMonth().getValue());
-        dos.writeInt(localDate.getYear());
-
-    }
-    private LocalDate readLocalDate(DataInputStream dis) throws IOException {
-        return LocalDate.of(dis.readInt(), dis.readInt(), 1);
-    }
-  /*  private void getInfoFromOrganization(List<Organization> listOrganization) {
-        for (Organization organization : listOrganization) {
-            link = organization.getLink();
-            positionList = organization.getPositionList();
-            getInfoLink(link);
-            getInfoPosition(positionList);
         }
     }
-
-    private void getInfoLink(Link link) {
-        String linkName = link.getName();
-        String linkUrl = link.getUrl();
-        infoOrganization.add(linkName);
-        infoOrganization.add(linkUrl);
-    }
-
-    private void getInfoPosition(List<Organization.Position> positionList) {
-        for (Organization.Position position : positionList) {
-            String title = position.getTitle();
-            String description = position.getDescription();
-            LocalDate startDate = position.getStartDate();
-            LocalDate endDate = position.getEndDate();
-            infoOrganization.add(startDate.toString());
-            infoOrganization.add(endDate.toString());
-            infoOrganization.add(title);
-            infoOrganization.add(description);
-        }
-    }*/
-
-
-
 
     @Override
     public Resume doRead(InputStream is) throws IOException {
@@ -127,7 +79,6 @@ public class DataStrategy implements SerializationStrategy {
             for (int i = 0; i < size; i++) {
                 resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
-            // TODO implements sections
 
             int sectionSize = dis.readInt();
             for (int i = 0; i < sectionSize - 1; i++) {
@@ -136,64 +87,66 @@ public class DataStrategy implements SerializationStrategy {
                 if (type == SectionType.PERSONAL || type == SectionType.OBJECTIVE) {
                     section = new TextType(dis.readUTF());
                 }
-                if (type == SectionType.ACHIEVEMENTS || type == SectionType.QUALIFICATIONS) {
-                    int listInfoSize = dis.readInt();
-                    List<String> listOfStrings = new ArrayList<>();
-                    for (int j = 0; j < listInfoSize; j++) {
-                        listOfStrings.add(dis.readUTF());
-                    }
-                    section = new ListOfStrings(listOfStrings);
+                switch (type) {
+                    case ACHIEVEMENTS:
+                    case QUALIFICATIONS:
+                        int listInfoSize = dis.readInt();
+                        List<String> listOfStrings = new ArrayList<>();
+                        for (int j = 0; j < listInfoSize; j++) {
+                            listOfStrings.add(dis.readUTF());
+                        }
+                        section = new ListOfStrings(listOfStrings);
+                        break;
                 }
-                if (type == SectionType.EXPERIENCE || type == SectionType.EDUCATION) {
-                    List<Organization> organizationList = new ArrayList<>();
-                    int organizationListSize = dis.readInt();
-                    Link link = new Link(dis.readUTF(), dis.readUTF());
-                    Organization.Position position = new Organization.Position(
-                            readLocalDate(dis),
-                            readLocalDate(dis),
-                           // LocalDate.parse(dis.readUTF()),
-                          //  LocalDate.parse(dis.readUTF()),
-                            dis.readUTF(),
-                            dis.readUTF()
-                    );
-                    int positionListSize = dis.readInt();
-
-                    List<Organization.Position> positionList = new ArrayList<>();
-                    for (int j = 0; j < positionListSize; j++) {
-                        positionList.add(position);
-                    }
-
-                    for (int j = 0; j < organizationListSize; j++) {
-                        organizationList.add(new Organization(link, positionList));
-                    }
-                    section = new OrganizationSection(organizationList);
-
-
-                    /*List<Organization> organizationList = new ArrayList<>();
-                    int organizationListSize = dis.readInt();
-                    int positionListSize = dis.readInt();
-
-                    Link link = new Link(dis.readUTF(), dis.readUTF());
-                    Organization.Position position = new Organization.Position(
-                            LocalDate.parse(dis.readUTF()),
-                            LocalDate.parse(dis.readUTF()),
-                            dis.readUTF(),
-                            dis.readUTF()
-                    );
-
-                    List<Organization.Position> positionList = new ArrayList<>();
-                    for (int j = 0; j < positionListSize; j++) {
-                        positionList.add(position);
-                    }
-
-                    for (int j = 0; j < organizationListSize; j++) {
-                        organizationList.add(new Organization(link, positionList));
-                    }
-                    section = new OrganizationSection(organizationList);*/
+                switch (type) {
+                    case EXPERIENCE:
+                    case EDUCATION:
+                        section = new OrganizationSection(readList(dis));
+                        break;
                 }
                 resume.addSection(type, section);
             }
             return resume;
         }
+    }
+
+    private void writeLocalData(DataOutputStream dos, LocalDate localDate) throws IOException {
+        dos.writeInt(localDate.getYear());
+        dos.writeInt(localDate.getMonth().getValue());
+    }
+
+    private LocalDate readLocalDate(DataInputStream dis) throws IOException {
+        return LocalDate.of(dis.readInt(), dis.readInt(), 1);
+    }
+
+    private List readList(DataInputStream dis) throws IOException {
+        List<Organization> organizationList = new ArrayList<>();
+        int organizationListSize = dis.readInt();
+        for (int j = 0; j < organizationListSize; j++) {
+            organizationList.add(new Organization(readLink(dis), readPositionList(dis)));
+        }
+        return organizationList;
+    }
+
+    private Link readLink(DataInputStream dis) throws IOException {
+        return new Link(dis.readUTF(), dis.readUTF());
+    }
+
+    private List<Organization.Position> readPositionList(DataInputStream dis) throws IOException {
+        int positionListSize = dis.readInt();
+        List<Organization.Position> positionList = new ArrayList<>();
+        for (int j = 0; j < positionListSize; j++) {
+            positionList.add(readPosition(dis));
+        }
+        return positionList;
+    }
+
+    private Organization.Position readPosition(DataInputStream dis) throws IOException {
+        return new Organization.Position(
+                readLocalDate(dis),
+                readLocalDate(dis),
+                dis.readUTF(),
+                dis.readUTF()
+        );
     }
 }
