@@ -5,6 +5,7 @@ import com.urise.webapp.model.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -16,56 +17,42 @@ public class DataStrategy implements SerializationStrategy {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
             Map<ContactType, String> contacts = resume.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
+            writeWithException(dos, contacts.entrySet(), entry -> {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
-            }
+            });
 
             Map<SectionType, AbstractSection> sections = resume.getSections();
-            dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                switch (entry.getKey()) {
+            writeWithException(dos, sections.entrySet(), type -> {
+                SectionType sectionType = type.getKey();
+                AbstractSection abstractSection = type.getValue();
+                dos.writeUTF(sectionType.name());
+                switch (sectionType) {
                     case PERSONAL:
                     case OBJECTIVE:
-                        AbstractSection section = entry.getValue();
-                        String info = ((TextType) section).getContent();
-                        dos.writeUTF(info);
+                        dos.writeUTF(((TextType) abstractSection).getContent());
                         break;
                 }
-                switch (entry.getKey()) {
+                switch (sectionType) {
                     case ACHIEVEMENTS:
                     case QUALIFICATIONS:
-                        AbstractSection section = entry.getValue();
-                        List<String> listInfo = ((ListOfStrings) section).getList();
-                        dos.writeInt(listInfo.size());
-                        for (String info : listInfo) {
-                            dos.writeUTF(info);
-                        }
-                        break;
+                        writeWithException(dos, ((ListOfStrings) abstractSection).getList(), dos::writeUTF);
                 }
-                switch (entry.getKey()) {
+                switch (sectionType) {
                     case EXPERIENCE:
                     case EDUCATION:
-                        AbstractSection section = entry.getValue();
-                        List<Organization> listOrganization = ((OrganizationSection) section).getOrganizations();
-                        dos.writeInt(listOrganization.size());
-                        for (Organization organization : listOrganization) {
-                            dos.writeUTF(organization.getLink().getName());
-                            dos.writeUTF(organization.getLink().getUrl());
-                            List<Organization.Position> positionList = organization.getPositionList();
-                            dos.writeInt(positionList.size());
-                            for (Organization.Position position : positionList) {
-                                writeLocalData(dos, position.getStartDate());
-                                writeLocalData(dos, position.getEndDate());
-                                dos.writeUTF(position.getTitle());
-                                dos.writeUTF(position.getDescription());
-                            }
-                        }
-                        break;
+                        writeWithException(dos, ((OrganizationSection) abstractSection).getOrganizations(), organizationType -> {
+                            dos.writeUTF(organizationType.getLink().getName());
+                            dos.writeUTF(organizationType.getLink().getUrl());
+                            writeWithException(dos, organizationType.getPositionList(), positionType -> {
+                                writeLocalData(dos, positionType.getStartDate());
+                                writeLocalData(dos, positionType.getEndDate());
+                                dos.writeUTF(positionType.getTitle());
+                                dos.writeUTF(positionType.getDescription());
+                            });
+                        });
                 }
-            }
+            });
         }
     }
 
@@ -150,5 +137,16 @@ public class DataStrategy implements SerializationStrategy {
                 dis.readUTF(),
                 dis.readUTF()
         );
+    }
+
+    private interface InfoWriter<T> {
+        void write(T type) throws IOException;
+    }
+
+    private <T> void writeWithException(DataOutputStream dos, Collection<T> collection, InfoWriter<T> infoWriter) throws IOException {
+        dos.writeInt(collection.size());
+        for (T element : collection) {
+            infoWriter.write(element);
+        }
     }
 }
