@@ -62,40 +62,40 @@ public class DataStrategy implements SerializationStrategy {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int size = dis.readInt();
-            for (int i = 0; i < size; i++) {
-                resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            }
-            int sectionSize = dis.readInt();
-            for (int i = 0; i < sectionSize; i++) {
+            readContacts(dis, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
+
+            readPoints(dis, () -> {
                 SectionType type = SectionType.valueOf(dis.readUTF());
-                AbstractSection section = null;
-                switch (type) {
-                    case PERSONAL:
-                    case OBJECTIVE:
-                        section = new TextType(dis.readUTF());
-                        break;
-                }
-                switch (type) {
-                    case ACHIEVEMENTS:
-                    case QUALIFICATIONS:
-                        int listInfoSize = dis.readInt();
-                        List<String> listOfStrings = new ArrayList<>();
-                        for (int j = 0; j < listInfoSize; j++) {
-                            listOfStrings.add(dis.readUTF());
-                        }
-                        section = new ListOfStrings(listOfStrings);
-                        break;
-                }
-                switch (type) {
-                    case EXPERIENCE:
-                    case EDUCATION:
-                        section = new OrganizationSection(readList(dis));
-                        break;
-                }
-                resume.addSection(type, section);
-            }
+                resume.addSection(type, readSections(dis, type));
+                return null;
+            });
             return resume;
+        }
+    }
+
+    private AbstractSection readSections(DataInputStream dis, SectionType type) throws IOException {
+        switch (type) {
+            case PERSONAL:
+            case OBJECTIVE:
+                return new TextType(dis.readUTF());
+        }
+        switch (type) {
+            case ACHIEVEMENTS:
+            case QUALIFICATIONS:
+                return new ListOfStrings(readPoints(dis, dis::readUTF));
+        }
+        switch (type) {
+            case EXPERIENCE:
+            case EDUCATION:
+                return new OrganizationSection(
+                        readPoints(dis, () -> new Organization(
+                                new Link(dis.readUTF(), dis.readUTF()),
+                                DataStrategy.this.readPoints(dis, () -> new Organization.Position(
+                                        DataStrategy.this.readLocalDate(dis), DataStrategy.this.readLocalDate(dis), dis.readUTF(), dis.readUTF()
+                                ))
+                        )));
+            default:
+                throw new IllegalStateException();
         }
     }
 
@@ -108,39 +108,16 @@ public class DataStrategy implements SerializationStrategy {
         return LocalDate.of(dis.readInt(), dis.readInt(), 1);
     }
 
-    private List readList(DataInputStream dis) throws IOException {
-        List<Organization> organizationList = new ArrayList<>();
-        int organizationListSize = dis.readInt();
-        for (int j = 0; j < organizationListSize; j++) {
-            organizationList.add(new Organization(readLink(dis), readPositionList(dis)));
-        }
-        return organizationList;
-    }
-
-    private Link readLink(DataInputStream dis) throws IOException {
-        return new Link(dis.readUTF(), dis.readUTF());
-    }
-
-    private List<Organization.Position> readPositionList(DataInputStream dis) throws IOException {
-        int positionListSize = dis.readInt();
-        List<Organization.Position> positionList = new ArrayList<>();
-        for (int j = 0; j < positionListSize; j++) {
-            positionList.add(readPosition(dis));
-        }
-        return positionList;
-    }
-
-    private Organization.Position readPosition(DataInputStream dis) throws IOException {
-        return new Organization.Position(
-                readLocalDate(dis),
-                readLocalDate(dis),
-                dis.readUTF(),
-                dis.readUTF()
-        );
-    }
-
     private interface InfoWriter<T> {
         void write(T type) throws IOException;
+    }
+
+    private interface ContactReader {
+        void readObject() throws IOException;
+    }
+
+    private interface PointReader<T> {
+        T readPoint() throws IOException;
     }
 
     private <T> void writeWithException(DataOutputStream dos, Collection<T> collection, InfoWriter<T> infoWriter) throws IOException {
@@ -149,4 +126,21 @@ public class DataStrategy implements SerializationStrategy {
             infoWriter.write(element);
         }
     }
+
+    private void readContacts(DataInputStream dis, ContactReader contactReader) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            contactReader.readObject();
+        }
+    }
+
+    private <T> List<T> readPoints(DataInputStream dis, PointReader<T> pointReader) throws IOException {
+        int size = dis.readInt();
+        List<T> pointsList = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            pointsList.add(pointReader.readPoint());
+        }
+        return pointsList;
+    }
+
 }
