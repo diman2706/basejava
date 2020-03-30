@@ -64,7 +64,7 @@ public class DataStrategy implements SerializationStrategy {
             Resume resume = new Resume(uuid, fullName);
             readContacts(dis, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
 
-            readPoints(dis, () -> {
+            readContacts(dis, () -> {
                 SectionType type = SectionType.valueOf(dis.readUTF());
                 resume.addSection(type, readSections(dis, type));
                 return null;
@@ -82,16 +82,16 @@ public class DataStrategy implements SerializationStrategy {
         switch (type) {
             case ACHIEVEMENTS:
             case QUALIFICATIONS:
-                return new ListOfStrings(readPoints(dis, dis::readUTF));
+                return new ListOfStrings(readContacts(dis, (PointReader<String>) dis::readUTF));
         }
         switch (type) {
             case EXPERIENCE:
             case EDUCATION:
                 return new OrganizationSection(
-                        readPoints(dis, () -> new Organization(
+                        readContacts(dis, () -> new Organization(
                                 new Link(dis.readUTF(), dis.readUTF()),
-                                DataStrategy.this.readPoints(dis, () -> new Organization.Position(
-                                        DataStrategy.this.readLocalDate(dis), DataStrategy.this.readLocalDate(dis), dis.readUTF(), dis.readUTF()
+                                readContacts(dis, () -> new Organization.Position(
+                                        readLocalDate(dis), readLocalDate(dis), dis.readUTF(), dis.readUTF()
                                 ))
                         )));
             default:
@@ -134,7 +134,7 @@ public class DataStrategy implements SerializationStrategy {
         }
     }
 
-    private <T> List<T> readPoints(DataInputStream dis, PointReader<T> pointReader) throws IOException {
+    private <T> List<T> readContacts(DataInputStream dis, PointReader<T> pointReader) throws IOException {
         int size = dis.readInt();
         List<T> pointsList = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
