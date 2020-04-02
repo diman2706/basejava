@@ -9,20 +9,10 @@ import static java.util.stream.Collectors.toList;
 
 public class MainStream {
     public static int minValue(int[] values) {
-        List<Integer> list = Arrays.stream(values).boxed().sorted().distinct().collect(Collectors.toList());
-        return (int) convertToInt(list);
-    }
-
-    public static double convertToInt(List<Integer> list) {
-        int amountOfNums = list.size();
-        double d = 0;
-        for (double a : list) {
-            double b = Math.pow(10, amountOfNums - 1);
-            double c = a * b;
-            d = d + c;
-            amountOfNums--;
-        }
-        return d;
+       return IntStream.of(values).sorted().distinct().reduce((left, right) -> {
+            left = left*10;
+            return left + right;
+        }).getAsInt();
     }
 
     public static List<Integer> oddOrEven(List<Integer> integers) {
