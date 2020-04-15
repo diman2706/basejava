@@ -1,6 +1,7 @@
 package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.NotExistStorageException;
+import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.ContactType;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.sql.SqlExecutor;
@@ -94,19 +95,21 @@ public class SqlStorage implements Storage {
                 "   SELECT * FROM resume r\n" +
                 "LEFT JOIN contact c ON r.uuid = c.resume_uuid\n" +
                 "ORDER BY full_name, uuid", ps -> {
-                    ResultSet resultSet = ps.executeQuery();
-                    Map<String, Resume> map = new LinkedHashMap<>();
-                    while (resultSet.next()) {
-                        String uuid = resultSet.getString("uuid");
-                        Resume resume = map.get(uuid);
-                        if (resume == null) {
-                            resume = new Resume(uuid, resultSet.getString("full_name"));
-                            map.put(uuid, resume);
-                        }
-                        addContact(resultSet, resume);
+            ResultSet resultSet = ps.executeQuery();
+            Map<String, Resume> map = new LinkedHashMap<>();
+            while (resultSet.next()) {
+                String uuid = resultSet.getString("uuid");
+                map.computeIfAbsent(uuid, s -> {
+                    try {
+                        return new Resume(uuid, resultSet.getString("full_name"));
+                    } catch (SQLException e) {
+                        throw new StorageException(e);
                     }
-                    return new ArrayList<>(map.values());
                 });
+                addContact(resultSet, map.get(uuid));
+            }
+            return new ArrayList<>(map.values());
+        });
     }
 
     @Override

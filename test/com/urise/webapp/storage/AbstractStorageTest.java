@@ -9,7 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 
@@ -94,11 +97,10 @@ public abstract class AbstractStorageTest {
     @Test()
     public void update() throws Exception {
         Resume newResume = new Resume(UUID_1, "New Name");
-        R1.addContact(ContactType.PHONENUMBER, "NEW");
-        R1.addContact(ContactType.MAIL, "NEW MAIL");
+        newResume.addContact(ContactType.PHONENUMBER, "NEW");
+        newResume.addContact(ContactType.MAIL, "NEW MAIL");
         storage.update(newResume);
         assertEquals(newResume, storage.get(UUID_1));
-
     }
 
     @Test(expected = NotExistStorageException.class)
