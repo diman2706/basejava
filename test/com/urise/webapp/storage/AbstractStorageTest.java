@@ -3,13 +3,12 @@ package com.urise.webapp.storage;
 import com.urise.webapp.Config;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.model.ContactType;
-import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -48,11 +47,11 @@ public abstract class AbstractStorageTest {
 
         R4.addContact(ContactType.PHONENUMBER, "44444");
         R4.addContact(ContactType.MAIL, "mail444@ya.ru");
-        /*R1.addSection(SectionType.PERSONAL, new TextType("Personal data"));
+        R1.addSection(SectionType.PERSONAL, new TextType("Personal data"));
         R1.addSection(SectionType.OBJECTIVE, new TextType("Objective1"));
-        R1.addSection(SectionType.ACHIEVEMENTS, new ListOfStrings("Achivment11", "Achivment12", "Achivment13"));
+        R1.addSection(SectionType.ACHIEVEMENTS, new ListOfStrings("Achivment11", "Achivment12", "Achivment13","Oppa"));
         R1.addSection(SectionType.QUALIFICATIONS, new ListOfStrings("Java", "SQL", "JavaScript"));
-        R1.addSection(SectionType.EXPERIENCE,
+        /*R1.addSection(SectionType.EXPERIENCE,
             new OrganizationSection(
                         new Organization("Organization1", "http://Organization1.ru",
             new Organization.Position(2005, Month.JANUARY, "position1", "content1"),
@@ -112,7 +111,10 @@ public abstract class AbstractStorageTest {
     public void getAllSorted() throws Exception {
         List<Resume> list = storage.getAllSorted();
         assertEquals(3, list.size());
-        List<Resume> sortedResumes = Arrays.asList(R1, R2, R3);
+        List<Resume> sortedResumes = new ArrayList<>();
+        sortedResumes.add(R1);
+        sortedResumes.add(R2);
+        sortedResumes.add(R3);
         Collections.sort(sortedResumes);
         assertEquals(list, sortedResumes);
     }

@@ -7,10 +7,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class Config {
-    private static final File PROPS = new File("config\\resumes.properties");
+  //  private static final File PROPS = new File("config\\resumes.properties");
+    private static final File PROPS = new File("C:\\Program Files\\Projectfolder\\basejava\\config\\resumes.properties");
     private static final Config INSTANCE = new Config();
 
     private final File storageDir;
@@ -29,6 +32,29 @@ public class Config {
         } catch (IOException e) {
             throw new IllegalStateException("Invalid config file " + PROPS.getAbsolutePath());
         }
+    }
+
+    public static List<String> getProperties() throws ClassNotFoundException {
+        Class.forName("org.postgresql.Driver");
+        List<String> properties = new ArrayList<>();
+        FileInputStream fis;
+        Properties property = new Properties();
+        try {
+            fis = new FileInputStream(PROPS);
+            property.load(fis);
+
+            String url = property.getProperty("db.url");
+            String user = property.getProperty("db.user");
+            String password = property.getProperty("db.password");
+
+            properties.add(url);
+            properties.add(user);
+            properties.add(password);
+
+        } catch (IOException e) {
+            System.err.println("ОШИБКА: Файл свойств отсуствует!");
+        }
+        return properties;
     }
 
     public File getStorageDir() {

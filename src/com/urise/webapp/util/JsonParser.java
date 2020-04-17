@@ -19,5 +19,4 @@ public class JsonParser {
     public static <T> void write(T object, Writer writer) {
         GSON.toJson(object, writer);
     }
-
 }
