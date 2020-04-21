@@ -6,7 +6,10 @@ import com.urise.webapp.sql.SqlExecutor;
 import com.urise.webapp.sql.SqlHelper;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SqlStorage implements Storage {
@@ -69,7 +72,8 @@ public class SqlStorage implements Storage {
                 ps.setString(1, resume.getUuid());
                 ps.execute();
             }
-            return insertContactsAndSections(resume, conn);
+            insertContactsAndSections(resume, conn);
+            return null;
         });
     }
 
@@ -81,7 +85,8 @@ public class SqlStorage implements Storage {
                         ps.setString(2, resume.getFullName());
                         ps.execute();
                     }
-                    return insertContactsAndSections(resume, conn);
+                    insertContactsAndSections(resume, conn);
+                    return null;
                 }
         );
     }
@@ -158,16 +163,14 @@ public class SqlStorage implements Storage {
             switch (type) {
                 case ACHIEVEMENTS:
                 case QUALIFICATIONS:
-                    List<String> list = new ArrayList<>();
                     String[] splits = content.replace("{", "").replace("}", "").split("\\n");
-                    Collections.addAll(list, splits);
-                    resume.addSection(type, new ListOfStrings(list));
+                    resume.addSection(type, new ListOfStrings(splits));
                     break;
             }
         }
     }
 
-    private Object insertContactsAndSections(Resume resume, Connection conn) throws SQLException {
+    private void insertContactsAndSections(Resume resume, Connection conn) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement("INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)")) {
             for (Map.Entry<ContactType, String> e : resume.getContacts().entrySet()) {
                 ps.setString(1, resume.getUuid());
@@ -179,26 +182,33 @@ public class SqlStorage implements Storage {
         }
         try (PreparedStatement ps = conn.prepareStatement("INSERT INTO section (resume_uuid, type, content) VALUES (?,?,?)")) {
             for (Map.Entry<SectionType, AbstractSection> e : resume.getSections().entrySet()) {
-                ps.setString(1, resume.getUuid());
-                ps.setString(2, e.getKey().name());
+                SectionType type = e.getKey();
                 AbstractSection section = e.getValue();
-                getTypeOfSection(section, ps, conn);
+                ps.setString(1, resume.getUuid());
+                ps.setString(2, type.name());
+                getTypeOfSection(type, ps, section);
                 ps.addBatch();
             }
             ps.executeBatch();
         }
-        return null;
     }
 
-    private void getTypeOfSection(AbstractSection section, PreparedStatement ps, Connection conn) throws SQLException {
-        if (section instanceof TextType) {
-            String content = ((TextType) section).getContent();
-            ps.setString(3, content);
+    private void getTypeOfSection(SectionType type, PreparedStatement ps, AbstractSection section) throws SQLException {
+
+        switch (type) {
+            case PERSONAL:
+            case OBJECTIVE:
+                String content = ((TextType) section).getContent();
+                ps.setString(3, content);
+                break;
         }
-        if (section instanceof ListOfStrings) {
-            List<String> list = ((ListOfStrings) section).getList();
-            String stringBuilder = list.stream().map(s -> s + "\n").collect(Collectors.joining());
-            ps.setString(3, stringBuilder);
+        switch (type) {
+            case ACHIEVEMENTS:
+            case QUALIFICATIONS:
+                List<String> list = ((ListOfStrings) section).getList();
+                String stringBuilder = list.stream().map(s -> s + "\n").collect(Collectors.joining());
+                ps.setString(3, stringBuilder);
+                break;
         }
     }
 }
