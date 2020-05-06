@@ -2,6 +2,7 @@ package com.urise.webapp;
 
 import com.urise.webapp.model.*;
 
+import java.time.Month;
 import java.util.UUID;
 
 public class TestData {
@@ -36,5 +37,16 @@ public class TestData {
         R1.addSection(SectionType.OBJECTIVE, new TextType("Objective1"));
         R1.addSection(SectionType.ACHIEVEMENTS, new ListOfStrings("Achivment11", "Achivment12", "Achivment13", "Oppa"));
         R1.addSection(SectionType.QUALIFICATIONS, new ListOfStrings("Java", "SQL", "JavaScript"));
+        R1.addSection(SectionType.EDUCATION, new ListOfStrings("Java", "SQL", "JavaScript"));
+        R1.addSection(SectionType.EXPERIENCE,
+                new OrganizationSection(
+                        new Organization("Organization2", "http://Organization2.ru",
+                                new Organization.Position(2015, Month.JANUARY, "position1", "content1"))));
+        R1.addSection(SectionType.EDUCATION,
+                new OrganizationSection(
+                        new Organization("Institute", null,
+                                new Organization.Position(1996, Month.JANUARY, 2000, Month.DECEMBER, "aspirant", null),
+                                new Organization.Position(2001, Month.MARCH, 2005, Month.JANUARY, "student", "IT facultet")),
+                        new Organization("Organization12", "http://Organization12.ru")));
     }
 }

@@ -5,6 +5,8 @@ import java.util.Objects;
 public class TextType extends AbstractSection {
     private static final long serialVersionUID = 1L;
 
+    public static final TextType EMPTY = new TextType("");
+
     private String content;
 
     public TextType(String content) {
